@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react";
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "../firebase/firebase";
+import {
+  collection,
+  getDocs,
+  doc,
+  setDoc,
+  serverTimestamp,
+} from "firebase/firestore";
+import { db, auth } from "../firebase/firebase";
 import CategoryTabs from "../components/CategoryTabs";
 import GenderTabs from "../components/GenderTabs";
 import ProductGrid from "../components/ProductGrid";
@@ -35,11 +41,30 @@ const Products = () => {
       (currentGender === "all" || p.gender === currentGender)
   );
 
-  const addToCart = (id) => {
-    const button = document.querySelector(`[data-id="${id}"]`);
-    if (button) {
-      button.textContent = "Added!";
-      setTimeout(() => (button.textContent = "Add to Cart"), 1000);
+  const addToCart = async (productId) => {
+    const user = auth.currentUser;
+
+    if (!user) {
+      alert("Please login to add items to your cart.");
+      return;
+    }
+
+    const cartRef = doc(db, "users", user.uid, "cart", productId);
+
+    try {
+      await setDoc(cartRef, {
+        quantity: 1,
+        addedAt: serverTimestamp(),
+      });
+
+      const button = document.querySelector(`[data-id="${productId}"]`);
+      if (button) {
+        button.textContent = "Added!";
+        setTimeout(() => (button.textContent = "Add to Cart"), 1000);
+      }
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      alert("Failed to add to cart.");
     }
   };
 

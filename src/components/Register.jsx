@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "../firebase/firebase";
-import { doc, setDoc, serverTimestamp } from "firebase/firestore";
+import { doc, setDoc, serverTimestamp, collection } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 
 const Register = () => {
@@ -16,7 +16,7 @@ const Register = () => {
     setError("");
 
     try {
-      // Create user in Firebase Auth
+      // 1. Create user in Firebase Auth
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         email,
@@ -24,14 +24,23 @@ const Register = () => {
       );
       const user = userCredential.user;
 
-      // Save additional user data in Firestore
-      await setDoc(doc(db, "users", user.uid), {
+      // 2. Save user details in Firestore
+      const userRef = doc(db, "users", user.uid);
+      await setDoc(userRef, {
         name: username,
         email,
         createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(), // optional for future updates
+        updatedAt: serverTimestamp(),
       });
 
+      // 3. Create sample product inside cart subcollection (to initialize it)
+      const cartItemRef = doc(db, "users", user.uid, "cart", "sample-product");
+      await setDoc(cartItemRef, {
+        quantity: 1,
+        addedAt: serverTimestamp(),
+      });
+
+      // 4. Redirect
       navigate("/products");
     } catch (err) {
       setError(err.message);
@@ -68,7 +77,6 @@ const Register = () => {
           required
           autoComplete="new-password"
         />
-
         <button
           type="submit"
           className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"

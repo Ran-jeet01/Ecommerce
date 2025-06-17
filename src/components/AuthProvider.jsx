@@ -1,12 +1,20 @@
 // src/components/AuthProvider.jsx
-import React, { createContext, useEffect, useState, useContext } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { auth } from "../firebase/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 
 const AuthContext = createContext();
 
-export const useAuth = () => useContext(AuthContext);
+// Named export for the hook
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
+};
 
+// Named export for the provider
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -20,7 +28,10 @@ export const AuthProvider = ({ children }) => {
     return unsubscribe;
   }, []);
 
-  const value = { currentUser };
+  const value = {
+    currentUser,
+    loading,
+  };
 
   return (
     <AuthContext.Provider value={value}>
@@ -28,3 +39,6 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
+
+// Default export (optional but recommended for consistency)
+export default AuthProvider;
