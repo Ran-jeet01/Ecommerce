@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "../firebase/firebase";
-import { doc, setDoc, serverTimestamp, collection } from "firebase/firestore";
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 
 const Register = () => {
@@ -29,18 +29,12 @@ const Register = () => {
       await setDoc(userRef, {
         name: username,
         email,
+        role: "user", // Default role for new users
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       });
 
-      // 3. Create sample product inside cart subcollection (to initialize it)
-      // const cartItemRef = doc(db, "users", user.uid, "cart", "sample-product");
-      // await setDoc(cartItemRef, {
-      //   quantity: 1,
-      //   addedAt: serverTimestamp(),
-      // });
-
-      // 4. Redirect
+      // 3. Redirect after registration
       navigate("/products");
     } catch (err) {
       setError(err.message);

@@ -7,6 +7,7 @@ import {
   updateDoc,
   deleteDoc,
   onSnapshot,
+  addDoc,
 } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 
@@ -17,13 +18,11 @@ const Cart = () => {
   const user = auth.currentUser;
   const navigate = useNavigate();
 
-  // Format price safely
   const formatPrice = (price) => {
     const num = Number(price);
     return isNaN(num) ? "0.00" : num.toFixed(2);
   };
 
-  // Format total safely
   const formatTotal = (price, quantity) => {
     const priceNum = Number(price) || 0;
     const quantityNum = Number(quantity) || 0;
@@ -43,9 +42,62 @@ const Cart = () => {
 
   const checkout = async () => {
     if (cartItems.length === 0) return;
-    alert("Purchase successful! Clearing cart...");
-    for (const item of cartItems) {
-      await deleteItem(item.id);
+
+    try {
+      // Step 1: Get user's saved location
+      const userRef = doc(db, "users", user.uid);
+      const userSnap = await getDoc(userRef);
+
+      if (!userSnap.exists()) {
+        alert("User data not found.");
+        return;
+      }
+
+      const userData = userSnap.data();
+      const userLocation = userData.location;
+
+      if (!userLocation || userLocation.trim() === "") {
+        alert("You must save your location before placing an order.");
+        navigate("/profile");
+        return;
+      }
+
+      // Step 2: Create order object
+      const orderData = {
+        userId: user.uid,
+        userEmail: user.email || "",
+        items: cartItems.map((item) => ({
+          productId: item.id,
+          name: item.product.name,
+          price: Number(item.product.price),
+          quantity: item.quantity,
+        })),
+        total: Number(total.toFixed(2)),
+        location: userLocation,
+        delivered: false, // NEW FIELD
+        createdAt: new Date().toISOString(),
+      };
+
+      // Step 3: Save in both user and global orders
+      const userOrdersRef = collection(db, "users", user.uid, "orders");
+      const globalOrdersRef = collection(db, "orders");
+
+      const globalOrderDoc = await addDoc(globalOrdersRef, orderData);
+      await addDoc(userOrdersRef, {
+        ...orderData,
+        globalOrderId: globalOrderDoc.id, // Optional link
+      });
+
+      // Step 4: Clear cart
+      for (const item of cartItems) {
+        await deleteItem(item.id);
+      }
+
+      alert("Purchase successful! Your order has been saved.");
+      navigate("/my-orders");
+    } catch (error) {
+      console.error("Checkout error:", error);
+      alert("An error occurred during checkout.");
     }
   };
 
@@ -72,7 +124,6 @@ const Cart = () => {
       );
       setCartItems(items);
 
-      // Calculate total with proper number conversion
       const calculatedTotal = items.reduce((sum, item) => {
         const price = Number(item.product.price) || 0;
         const quantity = Number(item.quantity) || 0;
@@ -107,8 +158,7 @@ const Cart = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <h2 className="text-2xl font-bold mb-6 flex items-center">
-        <span className="mr-2">🛒</span>
-        Your Cart
+        <span className="mr-2">🛒</span>Your Cart
       </h2>
 
       {cartItems.length === 0 ? (
@@ -123,14 +173,12 @@ const Cart = () => {
         </div>
       ) : (
         <div className="space-y-4">
-          {/* Cart Items */}
           <div className="bg-white rounded-lg shadow overflow-hidden">
             {cartItems.map((item) => (
               <div
                 key={item.id}
                 className="flex flex-col sm:flex-row justify-between items-center p-4 border-b last:border-b-0"
               >
-                {/* Product Info */}
                 <div className="flex items-center w-full sm:w-auto mb-4 sm:mb-0">
                   <div className="w-16 h-16 bg-gray-200 rounded mr-4 overflow-hidden">
                     {item.product.imageURL && (
@@ -149,7 +197,6 @@ const Cart = () => {
                   </div>
                 </div>
 
-                {/* Quantity Controls */}
                 <div className="flex items-center justify-between w-full sm:w-auto">
                   <div className="flex items-center mr-4 sm:mr-6">
                     <button
@@ -187,7 +234,6 @@ const Cart = () => {
             ))}
           </div>
 
-          {/* Summary and Checkout */}
           <div className="bg-white p-4 rounded-lg shadow">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold">Total</h3>
