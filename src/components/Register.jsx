@@ -34,11 +34,11 @@ const Register = () => {
       });
 
       // 3. Create sample product inside cart subcollection (to initialize it)
-      const cartItemRef = doc(db, "users", user.uid, "cart", "sample-product");
-      await setDoc(cartItemRef, {
-        quantity: 1,
-        addedAt: serverTimestamp(),
-      });
+      // const cartItemRef = doc(db, "users", user.uid, "cart", "sample-product");
+      // await setDoc(cartItemRef, {
+      //   quantity: 1,
+      //   addedAt: serverTimestamp(),
+      // });
 
       // 4. Redirect
       navigate("/products");

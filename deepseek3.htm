@@ -3,536 +3,126 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Time2Flex - Premium Fashion</title>
+    <title>3D House</title>
     <style>
-      :root {
-        --primary: #2c3e50;
-        --secondary: #3498db;
-        --light: #ecf0f1;
-        --dark: #2c3e50;
-        --accent: #e74c3c;
-      }
-
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      }
-
       body {
-        background-color: #f5f5f5;
-        color: var(--dark);
-      }
-
-      /* Navbar */
-      .navbar {
-        background-color: var(--primary);
-        color: white;
-        padding: 1rem 2rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        position: sticky;
-        top: 0;
-        z-index: 100;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      }
-
-      .logo {
-        font-size: 1.8rem;
-        font-weight: bold;
-        color: white;
-        text-decoration: none;
-      }
-
-      .logo span {
-        color: var(--secondary);
-      }
-
-      .nav-links {
-        display: flex;
-        gap: 2rem;
-      }
-
-      .nav-links a {
-        color: white;
-        text-decoration: none;
-        font-weight: 500;
-        transition: color 0.3s;
-      }
-
-      .nav-links a:hover {
-        color: var(--secondary);
-      }
-
-      .cart-icon,
-      .profile-icon {
-        font-size: 1.2rem;
-      }
-
-      /* Hero Section */
-      .hero {
+        margin: 0;
         height: 100vh;
-        background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3));
         display: flex;
-        flex-direction: column;
         justify-content: center;
         align-items: center;
-        text-align: center;
-        color: white;
-        position: relative;
+        background: #f0f0f0;
+        perspective: 1000px;
         overflow: hidden;
       }
 
-      .hero-bg {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        display: flex;
-        z-index: -1;
-      }
-
-      .hero-bg-item {
-        flex: 1;
-        height: 100%;
-        background-size: cover;
-        background-position: center;
-        transition: all 0.8s ease;
-        filter: brightness(0.7);
-      }
-
-      .hero-bg-item:hover {
-        flex: 2;
-        filter: brightness(1);
-      }
-
-      .hero-content {
-        max-width: 800px;
-        padding: 0 2rem;
-      }
-
-      .hero h1 {
-        font-size: 4rem;
-        margin-bottom: 1rem;
-        text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
-      }
-
-      .hero p {
-        font-size: 1.5rem;
-        margin-bottom: 2rem;
-        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
-      }
-
-      .btn {
-        padding: 0.8rem 2rem;
-        background-color: var(--secondary);
-        color: white;
-        border: none;
-        border-radius: 5px;
-        font-weight: bold;
-        cursor: pointer;
-        transition: all 0.3s;
-        text-decoration: none;
-        font-size: 1.1rem;
-      }
-
-      .btn:hover {
-        background-color: #2980b9;
-        transform: translateY(-3px);
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-      }
-
-      /* Products Section */
-      .products {
-        padding: 4rem 2rem;
-      }
-
-      .section-title {
-        text-align: center;
-        margin-bottom: 3rem;
-        font-size: 2.5rem;
-        color: var(--dark);
-        position: relative;
-      }
-
-      .section-title:after {
-        content: "";
-        display: block;
-        width: 100px;
-        height: 4px;
-        background: var(--secondary);
-        margin: 10px auto;
-      }
-
-      .gender-section {
-        margin-bottom: 4rem;
-      }
-
-      .gender-title {
-        font-size: 1.8rem;
-        margin-bottom: 1.5rem;
-        color: var(--primary);
-        padding-left: 1rem;
-        border-left: 5px solid var(--secondary);
-      }
-
-      .product-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: 2rem;
-      }
-
-      .product-card {
-        background-color: white;
-        border-radius: 10px;
-        overflow: hidden;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        transition: all 0.3s;
-        position: relative;
-      }
-
-      .product-card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
-      }
-
-      .product-image {
+      .scene {
+        width: 300px;
         height: 300px;
-        width: 100%;
-        object-fit: cover;
-        transition: transform 0.5s;
+        position: relative;
+        transform-style: preserve-3d;
+        animation: rotate 15s infinite linear;
       }
 
-      .product-card:hover .product-image {
-        transform: scale(1.05);
-      }
-
-      .product-info {
-        padding: 1.5rem;
-      }
-
-      .product-category {
-        color: var(--secondary);
-        font-size: 0.9rem;
-        margin-bottom: 0.5rem;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-      }
-
-      .product-title {
-        font-size: 1.3rem;
-        margin-bottom: 0.5rem;
-        font-weight: 600;
-      }
-
-      .product-price {
-        font-weight: bold;
-        font-size: 1.3rem;
-        margin-bottom: 1rem;
-        color: var(--accent);
-      }
-
-      .original-price {
-        text-decoration: line-through;
-        color: #999;
-        font-size: 1rem;
-        margin-left: 0.5rem;
-      }
-
-      .discount-badge {
-        background-color: var(--accent);
-        color: white;
-        padding: 0.2rem 0.5rem;
-        border-radius: 5px;
-        font-size: 0.8rem;
-        margin-left: 0.5rem;
+      .house {
         position: absolute;
-        top: 15px;
-        right: 15px;
+        width: 200px;
+        height: 150px;
+        transform-style: preserve-3d;
+        transform: translateZ(-100px);
       }
 
-      .add-to-cart {
-        width: 100%;
-        padding: 0.8rem;
-        background-color: var(--primary);
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: all 0.3s;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 1px;
+      /* Base walls */
+      .wall {
+        position: absolute;
+        background: rgba(200, 200, 200, 0.7);
+        border: 2px solid #333;
+        box-sizing: border-box;
       }
 
-      .add-to-cart:hover {
-        background-color: var(--secondary);
-        transform: translateY(-2px);
+      /* Front wall */
+      .front {
+        width: 200px;
+        height: 150px;
+        transform: translateZ(100px);
       }
 
-      /* Responsive Design */
-      @media (max-width: 768px) {
-        .navbar {
-          flex-direction: column;
-          padding: 1rem;
-        }
+      /* Back wall */
+      .back {
+        width: 200px;
+        height: 150px;
+        transform: rotateY(180deg) translateZ(100px);
+      }
 
-        .nav-links {
-          margin-top: 1rem;
-          gap: 1rem;
-        }
+      /* Left wall */
+      .left {
+        width: 200px;
+        height: 150px;
+        transform: rotateY(-90deg) translateZ(100px);
+      }
 
-        .hero h1 {
-          font-size: 2.5rem;
-        }
+      /* Right wall */
+      .right {
+        width: 200px;
+        height: 150px;
+        transform: rotateY(90deg) translateZ(100px);
+      }
 
-        .hero p {
-          font-size: 1.2rem;
-        }
+      /* Roof */
+      .roof {
+        position: absolute;
+        width: 200px;
+        height: 200px;
+        background: rgba(150, 100, 100, 0.7);
+        border: 2px solid #333;
+        transform: rotateX(90deg) translateY(-100px);
+        transform-origin: bottom;
+      }
 
-        .hero-bg {
-          flex-direction: column;
-        }
+      /* Door */
+      .door {
+        position: absolute;
+        width: 40px;
+        height: 80px;
+        background: #654321;
+        bottom: 0;
+        left: 80px;
+        transform: translateZ(101px);
+      }
 
-        .hero-bg-item {
-          width: 100%;
-          height: 25%;
-        }
+      /* Window */
+      .window {
+        position: absolute;
+        width: 50px;
+        height: 50px;
+        background: #87ceeb;
+        top: 50px;
+        left: 30px;
+        transform: translateZ(101px);
+        border: 2px solid #333;
+      }
 
-        .hero-bg-item:hover {
-          height: 40%;
+      @keyframes rotate {
+        from {
+          transform: rotateY(0);
+        }
+        to {
+          transform: rotateY(360deg);
         }
       }
     </style>
   </head>
   <body>
-    <!-- Navbar -->
-    <nav class="navbar">
-      <a href="#" class="logo">TIME2<span>FLEX</span></a>
-      <div class="nav-links">
-        <a href="#">Home</a>
-        <a href="#products">Products</a>
-        <a href="#combo">Combo</a>
-        <a href="#" class="cart-icon">Cart (0)</a>
-        <a href="#" class="profile-icon">Login</a>
+    <div class="scene">
+      <div class="house">
+        <div class="wall front"></div>
+        <div class="wall back"></div>
+        <div class="wall left"></div>
+        <div class="wall right"></div>
+        <div class="roof"></div>
+        <div class="door"></div>
+        <div class="window"></div>
       </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <section class="hero">
-      <div class="hero-bg">
-        <div
-          class="hero-bg-item"
-          style="
-            background-image: url('https://images.unsplash.com/photo-1511499767150-a48a237f0083?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
-          "
-        ></div>
-        <div
-          class="hero-bg-item"
-          style="
-            background-image: url('https://images.unsplash.com/photo-1556306510-31ca015374b0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
-          "
-        ></div>
-        <div
-          class="hero-bg-item"
-          style="
-            background-image: url('https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
-          "
-        ></div>
-        <div
-          class="hero-bg-item"
-          style="
-            background-image: url('https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
-          "
-        ></div>
-      </div>
-      <div class="hero-content">
-        <h1>FLEX YOUR STYLE</h1>
-        <p>Discover premium fashion that matches your unique personality</p>
-        <a href="#products" class="btn">Explore Collection</a>
-      </div>
-    </section>
-
-    <!-- Products Section -->
-    <section class="products" id="products">
-      <h2 class="section-title">Our Collections</h2>
-
-      <!-- Male Products -->
-      <div class="gender-section" id="male">
-        <h3 class="gender-title">For Him</h3>
-        <div class="product-grid" id="male-products"></div>
-      </div>
-
-      <!-- Female Products -->
-      <div class="gender-section" id="female">
-        <h3 class="gender-title">For Her</h3>
-        <div class="product-grid" id="female-products"></div>
-      </div>
-
-      <!-- Unisex Products -->
-      <div class="gender-section" id="unisex">
-        <h3 class="gender-title">Unisex</h3>
-        <div class="product-grid" id="unisex-products"></div>
-      </div>
-    </section>
-
-    <script>
-      // Product Data (Would come from database in real app)
-      const products = {
-        male: [
-          {
-            id: 1,
-            name: "Chrono Elite",
-            category: "Watch",
-            price: 249,
-            discount: 20,
-            image:
-              "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-            description: "Premium men's watch with chronograph",
-          },
-          {
-            id: 2,
-            name: "Urban Runner",
-            category: "Shoes",
-            price: 129,
-            discount: 15,
-            image:
-              "https://images.unsplash.com/photo-1600269452121-4f2416e55c28?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-            description: "Comfortable running shoes for men",
-          },
-        ],
-        female: [
-          {
-            id: 3,
-            name: "Elegance Shades",
-            category: "Sunglasses",
-            price: 159,
-            discount: 25,
-            image:
-              "https://images.unsplash.com/photo-1511499767150-a48a237f0083?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-            description: "Designer sunglasses for women",
-          },
-          {
-            id: 4,
-            name: "Bella Heels",
-            category: "Shoes",
-            price: 179,
-            discount: 10,
-            image:
-              "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-            description: "Elegant high heels for special occasions",
-          },
-        ],
-        unisex: [
-          {
-            id: 5,
-            name: "Flex Hoodie",
-            category: "Hoody",
-            price: 79,
-            discount: 30,
-            image:
-              "https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-            description: "Comfortable unisex hoodie for all seasons",
-          },
-          {
-            id: 6,
-            name: "Classic Aviators",
-            category: "Sunglasses",
-            price: 139,
-            discount: 20,
-            image:
-              "https://images.unsplash.com/photo-1556306510-31ca015374b0?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-            description: "Timeless aviator sunglasses for everyone",
-          },
-        ],
-      };
-
-      // Render Products Function
-      function renderProducts() {
-        // Render Male Products
-        const maleContainer = document.getElementById("male-products");
-        products.male.forEach((product) => {
-          maleContainer.innerHTML += createProductCard(product);
-        });
-
-        // Render Female Products
-        const femaleContainer = document.getElementById("female-products");
-        products.female.forEach((product) => {
-          femaleContainer.innerHTML += createProductCard(product);
-        });
-
-        // Render Unisex Products
-        const unisexContainer = document.getElementById("unisex-products");
-        products.unisex.forEach((product) => {
-          unisexContainer.innerHTML += createProductCard(product);
-        });
-
-        // Initialize cart functionality
-        initializeCart();
-      }
-
-      // Create Product Card HTML
-      function createProductCard(product) {
-        const discountedPrice = product.price * (1 - product.discount / 100);
-        return `
-                <div class="product-card">
-                    <img src="${product.image}" alt="${
-          product.name
-        }" class="product-image">
-                    ${
-                      product.discount > 0
-                        ? `<span class="discount-badge">${product.discount}% OFF</span>`
-                        : ""
-                    }
-                    <div class="product-info">
-                        <div class="product-category">${product.category}</div>
-                        <h3 class="product-title">${product.name}</h3>
-                        <div class="product-price">$${discountedPrice.toFixed(
-                          2
-                        )}
-                            ${
-                              product.discount > 0
-                                ? `<span class="original-price">$${product.price.toFixed(
-                                    2
-                                  )}</span>`
-                                : ""
-                            }
-                        </div>
-                        <button class="add-to-cart" data-id="${
-                          product.id
-                        }">Add to Cart</button>
-                    </div>
-                </div>
-            `;
-      }
-
-      // Cart Functionality
-      function initializeCart() {
-        const addToCartButtons = document.querySelectorAll(".add-to-cart");
-        const cartCount = document.querySelector(".cart-icon");
-        let cartItems = 0;
-
-        addToCartButtons.forEach((button) => {
-          button.addEventListener("click", () => {
-            const productId = button.getAttribute("data-id");
-            // In real app, we would add to cart array
-            cartItems++;
-            cartCount.textContent = `Cart (${cartItems})`;
-
-            // Animation
-            button.textContent = "Added!";
-            setTimeout(() => {
-              button.textContent = "Add to Cart";
-            }, 1000);
-          });
-        });
-      }
-
-      // Initialize the page
-      document.addEventListener("DOMContentLoaded", renderProducts);
-    </script>
+    </div>
   </body>
 </html>

@@ -1,12 +1,12 @@
 const ProductCard = ({ product, addToCart }) => {
   const price = Number(product.price) || 0;
   const discount = Number(product.discount) || 0;
-  const discountedPrice = price * (1 - discount / 100);
+  const discountedPrice = price * (1 + discount / 100);
 
   return (
     <div className="bg-white rounded-lg shadow hover:shadow-lg hover:-translate-y-1 transition-all relative overflow-hidden">
       <img
-        src={product.image}
+        src={product.imageURL}
         alt={product.name}
         className="w-full h-48 object-cover hover:scale-105 transition-transform"
       />
@@ -24,11 +24,11 @@ const ProductCard = ({ product, addToCart }) => {
         </h3>
         <div className="mb-2">
           <span className="text-red-500 font-bold">
-            ${discountedPrice.toFixed(2)}
+            {/* ${discountedPrice.toFixed(2)} */}${price.toFixed(2)}
           </span>
           {discount > 0 && (
             <span className="text-gray-500 line-through ml-2 text-sm">
-              ${price.toFixed(2)}
+              {/* ${price.toFixed(2)} */}${discountedPrice.toFixed(2)}
             </span>
           )}
         </div>
