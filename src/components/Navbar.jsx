@@ -24,12 +24,14 @@ const Navbar = () => {
   const [userRole, setUserRole] = useState("");
   const [scrolled, setScrolled] = useState(false);
 
+  // Scroll effect
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Fetch user info
   useEffect(() => {
     const fetchUserInfo = async () => {
       if (!currentUser) {
@@ -37,29 +39,23 @@ const Navbar = () => {
         setUserRole("");
         return;
       }
-
       const userRef = doc(db, "users", currentUser.uid);
       const userSnap = await getDoc(userRef);
-
       if (userSnap.exists()) {
         const userData = userSnap.data();
         setUserName(userData.name || "");
         setUserRole(userData.role || "user");
-      } else {
-        setUserName("");
-        setUserRole("");
       }
     };
-
     fetchUserInfo();
   }, [currentUser]);
 
+  // Listen to cart updates
   useEffect(() => {
     if (!currentUser) {
       setCartCount(0);
       return;
     }
-
     const cartRef = collection(db, "users", currentUser.uid, "cart");
     const unsubscribe = onSnapshot(cartRef, (snapshot) => {
       const count = snapshot.docs.reduce(
@@ -68,7 +64,6 @@ const Navbar = () => {
       );
       setCartCount(count);
     });
-
     return () => unsubscribe();
   }, [currentUser]);
 
@@ -96,69 +91,84 @@ const Navbar = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <NavLink
-            to="/"
+            to={userRole === "admin" ? "/admin/dashboard" : "/"}
             className="text-2xl font-bold text-gray-900 hover:text-blue-500"
           >
             TIME2<span className="text-blue-500">FLEX</span>
           </NavLink>
 
-          {/* Desktop Navigation */}
+          {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-6">
-            <NavLink to="/" className={navLinkClasses}>
-              Home
-            </NavLink>
-            <NavLink to="/products" className={navLinkClasses}>
-              Products
-            </NavLink>
-
-            {currentUser && userRole === "admin" && (
-              <NavLink to="/admin" className={navLinkClasses}>
-                Admin Panel
-              </NavLink>
+            {/* Regular user links */}
+            {userRole !== "admin" && (
+              <>
+                <NavLink to="/" className={navLinkClasses}>
+                  Home
+                </NavLink>
+                <NavLink to="/products" className={navLinkClasses}>
+                  Products
+                </NavLink>
+                <NavLink to="/cart" className="relative flex items-center">
+                  <FiShoppingCart className="h-5 w-5 text-gray-700 hover:text-blue-500" />
+                  {cartCount > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-blue-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                      {cartCount}
+                    </span>
+                  )}
+                </NavLink>
+              </>
             )}
 
-            <NavLink to="/cart" className="relative flex items-center">
-              <FiShoppingCart className="h-5 w-5 text-gray-700 hover:text-blue-500" />
-              {cartCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-blue-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                  {cartCount}
-                </span>
-              )}
-            </NavLink>
+            {/* Admin links */}
+            {userRole === "admin" && (
+              <>
+                <NavLink to="/admin/dashboard" className={navLinkClasses}>
+                  Dashboard
+                </NavLink>
+                <NavLink to="/admin/orders" className={navLinkClasses}>
+                  Manage Orders
+                </NavLink>
+                <NavLink to="/admin/products" className={navLinkClasses}>
+                  Manage Products
+                </NavLink>
+                <NavLink to="/admin/users" className={navLinkClasses}>
+                  Manage Users
+                </NavLink>
+              </>
+            )}
 
+            {/* User Dropdown or Auth Links */}
             {currentUser ? (
               <div className="relative">
                 <button
                   onClick={() => setDropdownOpen(!dropdownOpen)}
                   className="flex items-center space-x-2 focus:outline-none"
                 >
-                  <div className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center text-blue-600 font-semibold shadow-sm">
+                  <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-semibold shadow">
                     {userName ? (
                       userName.charAt(0).toUpperCase()
                     ) : (
                       <FiUser className="w-4 h-4" />
                     )}
                   </div>
-                  <span className="text-gray-700 hover:text-blue-500 transition-colors duration-200">
+                  <span className="text-gray-700 hover:text-blue-500">
                     {userName || currentUser.email.split("@")[0]}
                   </span>
                   <FaChevronDown
                     className={`h-3 w-3 text-gray-500 transition-transform duration-200 ${
-                      dropdownOpen ? "transform rotate-180" : ""
+                      dropdownOpen ? "rotate-180" : ""
                     }`}
                   />
                 </button>
 
                 {dropdownOpen && (
                   <>
-                    {/* Click outside to close dropdown */}
                     <div
                       className="fixed inset-0 z-40"
                       onClick={() => setDropdownOpen(false)}
                     />
-
-                    <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-100 z-50 overflow-hidden">
-                      <div className="px-4 py-3 border-b border-gray-100">
+                    <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border z-50">
+                      <div className="px-4 py-3 border-b">
                         <p className="text-sm font-medium text-gray-900 truncate">
                           {userName || currentUser.email.split("@")[0]}
                         </p>
@@ -166,34 +176,27 @@ const Navbar = () => {
                           {currentUser.email}
                         </p>
                       </div>
-
                       <NavLink
                         to="/profile"
-                        className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 transition-colors duration-150"
+                        className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-blue-50"
                         onClick={() => setDropdownOpen(false)}
                       >
-                        <FiSettings className="mr-3 text-gray-500" />
-                        Update Profile
+                        <FiSettings className="mr-3" /> Update Profile
                       </NavLink>
-
-                      <NavLink
-                        to="/my-orders"
-                        className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 transition-colors duration-150"
-                        onClick={() => setDropdownOpen(false)}
-                      >
-                        <FiPackage className="mr-3 text-gray-500" />
-                        My Orders
-                      </NavLink>
-
-                      <div className="border-t border-gray-100">
+                      {userRole !== "admin" && (
+                        <NavLink
+                          to="/my-orders"
+                          className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-blue-50"
+                          onClick={() => setDropdownOpen(false)}
+                        >
+                          <FiPackage className="mr-3" /> My Orders
+                        </NavLink>
+                      )}
+                      <div className="border-t">
                         <LogoutButton
-                          className="flex items-center w-full px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 transition-colors duration-150 focus:outline-none"
-                          icon={<FiLogOut className="mr-3 text-gray-500" />}
+                          className="flex items-center w-full px-4 py-3 text-sm text-gray-700 hover:bg-blue-50"
+                          icon={<FiLogOut className="mr-3" />}
                         />
-                        {/* Inside your Navbar component's dropdown section */}
-                        {/* <div className="border-t border-gray-100">
-                          <LogoutButton className="px-4 py-3 hover:bg-blue-50" />
-                        </div> */}
                       </div>
                     </div>
                   </>
@@ -216,14 +219,16 @@ const Navbar = () => {
 
           {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center">
-            <NavLink to="/cart" className="relative mr-4">
-              <FiShoppingCart className="h-5 w-5 text-gray-700" />
-              {cartCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-blue-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                  {cartCount}
-                </span>
-              )}
-            </NavLink>
+            {userRole !== "admin" && (
+              <NavLink to="/cart" className="relative mr-4">
+                <FiShoppingCart className="h-5 w-5 text-gray-700" />
+                {cartCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-blue-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                    {cartCount}
+                  </span>
+                )}
+              </NavLink>
+            )}
             <button
               onClick={() => setMenuOpen(!menuOpen)}
               className="text-gray-700 hover:text-blue-500 focus:outline-none"
@@ -240,34 +245,63 @@ const Navbar = () => {
 
       {/* Mobile Navigation */}
       {menuOpen && (
-        <div className="md:hidden bg-white border-t border-gray-200">
+        <div className="md:hidden bg-white border-t">
           <div className="px-2 pt-2 pb-3 space-y-1">
-            <NavLink
-              to="/"
-              className={mobileNavLinkClasses}
-              onClick={() => setMenuOpen(false)}
-            >
-              Home
-            </NavLink>
-            <NavLink
-              to="/products"
-              className={mobileNavLinkClasses}
-              onClick={() => setMenuOpen(false)}
-            >
-              Products
-            </NavLink>
-
-            {currentUser && userRole === "admin" && (
-              <NavLink
-                to="/admin"
-                className={mobileNavLinkClasses}
-                onClick={() => setMenuOpen(false)}
-              >
-                Admin Panel
-              </NavLink>
+            {/* Regular user links */}
+            {userRole !== "admin" && (
+              <>
+                <NavLink
+                  to="/"
+                  className={mobileNavLinkClasses}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Home
+                </NavLink>
+                <NavLink
+                  to="/products"
+                  className={mobileNavLinkClasses}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Products
+                </NavLink>
+              </>
             )}
 
-            {currentUser && (
+            {/* Admin links */}
+            {userRole === "admin" && (
+              <>
+                <NavLink
+                  to="/admin/dashboard"
+                  className={mobileNavLinkClasses}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Dashboard
+                </NavLink>
+                <NavLink
+                  to="/admin/orders"
+                  className={mobileNavLinkClasses}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Manage Orders
+                </NavLink>
+                <NavLink
+                  to="/admin/products"
+                  className={mobileNavLinkClasses}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Manage Products
+                </NavLink>
+                <NavLink
+                  to="/admin/users"
+                  className={mobileNavLinkClasses}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Manage Users
+                </NavLink>
+              </>
+            )}
+
+            {currentUser ? (
               <>
                 <NavLink
                   to="/profile"
@@ -276,17 +310,18 @@ const Navbar = () => {
                 >
                   Update Profile
                 </NavLink>
-                <NavLink
-                  to="/my-orders"
-                  className={mobileNavLinkClasses}
-                  onClick={() => setMenuOpen(false)}
-                >
-                  My Orders
-                </NavLink>
+                {userRole !== "admin" && (
+                  <NavLink
+                    to="/my-orders"
+                    className={mobileNavLinkClasses}
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    My Orders
+                  </NavLink>
+                )}
+                <LogoutButton className="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-500" />
               </>
-            )}
-
-            {!currentUser ? (
+            ) : (
               <>
                 <NavLink
                   to="/login"
@@ -303,11 +338,6 @@ const Navbar = () => {
                   Register
                 </NavLink>
               </>
-            ) : (
-              <LogoutButton className="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-500" />
-              // <div className="border-t border-gray-100">
-              //   <LogoutButton className="px-4 py-3 hover:bg-blue-50" />
-              // </div>
             )}
           </div>
         </div>
