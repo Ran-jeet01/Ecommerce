@@ -12,8 +12,8 @@ const CloudinaryUploader = () => {
     // Create and save the widget instance
     widgetRef.current = window.cloudinary.createUploadWidget(
       {
-        cloudName: "dndrtcrhm",
-        uploadPreset: "product", // your unsigned preset
+        cloudName: "",
+        uploadPreset: "",
       },
       (error, result) => {
         if (!error && result.event === "success") {

@@ -6,7 +6,7 @@ const ProductCard = ({ product, addToCart }) => {
   return (
     <div className="bg-white rounded-lg shadow hover:shadow-lg hover:-translate-y-1 transition-all relative overflow-hidden">
       <img
-        src={product.imageURL}
+        src={product.imageUrl}
         alt={product.name}
         className="w-full h-48 object-cover hover:scale-105 transition-transform"
       />
