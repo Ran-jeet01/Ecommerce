@@ -1,7 +1,7 @@
 const ProductCard = ({ product, addToCart }) => {
   const price = Number(product.price) || 0;
   const discount = Number(product.discount) || 0;
-  const discountedPrice = price * (1 + discount / 100);
+  const discountedPrice = price / (1 - discount / 100);
 
   return (
     <div className="bg-white rounded-lg shadow hover:shadow-lg hover:-translate-y-1 transition-all relative overflow-hidden">
