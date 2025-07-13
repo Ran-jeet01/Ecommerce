@@ -31,6 +31,7 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+
   // Fetch user info
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -300,7 +301,7 @@ const Navbar = () => {
                 </NavLink>
               </>
             )}
-
+              
             {currentUser ? (
               <>
                 <NavLink
@@ -347,3 +348,13 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
+// User authentication status
+
+// User role (admin or not)
+
+// Cart contents
+
+// Scroll position (for visual effects)
+
+// Responsive screen size (desktop vs. mobile)

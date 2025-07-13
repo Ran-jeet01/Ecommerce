@@ -1,5 +1,5 @@
 const CategoryTabs = ({ currentCategory, changeCategory }) => {
-  const categories = ["sunglasses", "watches", "shoes", "hoodies", "combo"];
+  const categories = ["sunglasses", "watches", "shoes", "hoodies"];
 
   return (
     <div className="bg-gray-800 px-4 py-3 sticky top-[4.5rem] z-40 shadow-md flex justify-start md:justify-center overflow-x-auto hide-scrollbar">
