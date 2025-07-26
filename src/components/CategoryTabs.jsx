@@ -2,7 +2,7 @@ const CategoryTabs = ({ currentCategory, changeCategory }) => {
   const categories = ["sunglasses", "watches", "shoes", "hoodies"];
 
   return (
-    <div className="bg-gray-800 px-4 py-3 sticky top-[4.5rem] z-40 shadow-md flex justify-start md:justify-center overflow-x-auto hide-scrollbar">
+    <div className="bg-gray-800 px-4 py-3  top-[4.5rem] z-40 shadow-md flex justify-start md:justify-center overflow-x-auto hide-scrollbar">
       <div className="flex space-x-2 min-w-max">
         {categories.map((category) => (
           <button

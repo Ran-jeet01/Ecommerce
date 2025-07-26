@@ -19,7 +19,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Dashboard from "./pages/Admin/Dashboard";
 import ManageProducts from "./pages/Admin/ManageProducts";
 import ManageOrders from "./pages/Admin/ManageOrders";
-import ManageUsers from "./pages/Admin/ManageUsers"; // ✅ added
+import ManageUsers from "./pages/Admin/ManageUsers"; 
 
 // User Pages
 import UpdateProfile from "./pages/UpdateProfile";

@@ -70,6 +70,7 @@ const Products = () => {
 
   return (
     <>
+      {" "}
       <CategoryTabs
         currentCategory={currentCategory}
         changeCategory={setCurrentCategory}
